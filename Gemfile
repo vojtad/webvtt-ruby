@@ -1,6 +1,5 @@
-# A sample Gemfile
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "minitest", group: :development
+gem 'minitest', group: :development
 
 gemspec
