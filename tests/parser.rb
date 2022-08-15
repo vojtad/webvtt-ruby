@@ -100,18 +100,18 @@ class ParserTest < Minitest::Test
 
   def test_file_to_webvtt
     webvtt = WebVTT.read("tests/subtitles/test.vtt")
-    assert_equal webvtt.to_webvtt, File.read("tests/subtitles/test.vtt")
+    assert_equal File.read("tests/subtitles/test.vtt"), webvtt.to_webvtt
   end
 
   def test_cue_to_webvtt
     webvtt = WebVTT.read("tests/subtitles/test.vtt")
-    assert_equal webvtt.cues[0].to_webvtt, %(00:00:29.000 --> 00:00:31.000 line:75%
+    assert_equal %(00:00:29.000 --> 00:00:31.000 line:75%
 English subtitle 15 -Forced- (00:00:27.000)
-line:75%)
-    assert_equal webvtt.cues[1].to_webvtt, %(2
+line:75%), webvtt.cues[0].to_webvtt
+    assert_equal %(2
 00:00:31.000 --> 00:00:33.000 align:start line:0%
 English subtitle 16 -Unforced- (00:00:31.000)
-align:start line:0%)
+align:start line:0%), webvtt.cues[1].to_webvtt
   end
 
   def test_updating_webvtt
@@ -192,25 +192,25 @@ The text should change)
     00:00:01.000 --> 00:00:25.432
     Test Cue
     CUE
-    assert_equal 1.0, cue.start.to_f
-    assert_equal 25.432, cue.end.to_f
+    assert_equal 1000, cue.start.to_i
+    assert_equal 25432, cue.end.to_i
     cue.offset_by( 12.0 )
-    assert_equal 13.0, cue.start.to_f
-    assert_equal 37.432, cue.end.to_f
+    assert_equal 13000, cue.start.to_i
+    assert_equal 37432, cue.end.to_i
   end
 
   def test_timestamp_from_string
     ts_str = "00:05:31.522"
     ts = WebVTT::Timestamp.new( ts_str )
     assert_equal ts_str, ts.to_s
-    assert_equal (5*60 + 31.522), ts.to_f
+    assert_equal (5*60*1000 + 31522), ts.to_i
   end
 
   def test_timestamp_from_number
-    ts_f = (7*60 + 12.111)
+    ts_f = (7*60*1000 + 12111)
     ts = WebVTT::Timestamp.new( ts_f )
     assert_equal "00:07:12.111", ts.to_s
-    assert_equal ts_f, ts.to_f
+    assert_equal ts_f, ts.to_i
   end
 
   def test_timestamp_errors_from_unknown_type
@@ -221,7 +221,7 @@ The text should change)
 
   def test_timestamp_addition
     ts = WebVTT::Timestamp.new( "01:47:32.004" )
-    ts2 = ts + (4*60 + 30)
+    ts2 = ts + (4*60*1000 + 30000)
     assert_equal "01:52:02.004", ts2.to_s
     ts3 = ts + ts2
     assert_equal "03:39:34.008", ts3.to_s
@@ -230,7 +230,7 @@ The text should change)
   def test_build_cue
     cue = WebVTT::Cue.new
     cue.start = WebVTT::Timestamp.new 0
-    cue.end = WebVTT::Timestamp.new 12
+    cue.end = WebVTT::Timestamp.new 12000
     cue.text = "Built from scratch"
     output = ""
     output << "00:00:00.000 --> 00:00:12.000\n"
